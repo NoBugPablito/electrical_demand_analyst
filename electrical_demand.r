@@ -1,10 +1,3 @@
-# ---------------------------------------------------------------
-# Proyecto: Análisis de Demanda Eléctrica y Selección de Modelos
-# Autor: [Tu Nombre]
-# Descripción: Análisis exploratorio, correlación y modelamiento 
-#              predictivo de demanda eléctrica utilizando R.
-# ---------------------------------------------------------------
-
 # Cargar librerías
 library(dplyr)
 library(leaps)
@@ -13,14 +6,10 @@ library(glmnet)
 library(corrplot)
 library(ggplot2)
 
-# ---------------------------------------------------------------
-# 1. Cargar datos
-# ---------------------------------------------------------------
-df <- read.csv("D:/Descargas/demanda_electrica.csv", sep = ",", dec = ".")
 
-# ---------------------------------------------------------------
-# 2. Análisis exploratorio
-# ---------------------------------------------------------------
+df <- read.csv("", sep = ",", dec = ".")
+
+
 summary(df$demanda_MWh)
 
 # Histograma de demanda eléctrica
@@ -37,9 +26,6 @@ summary(var.numericas)
 Matriz.correlacion <- cor(var.numericas, use = "complete.obs")
 corrplot(Matriz.correlacion, method = "color", type = "upper", tl.cex = 0.7)
 
-# ---------------------------------------------------------------
-# 3. Relaciones importantes
-# ---------------------------------------------------------------
 # Demanda vs Población
 plot(df$poblacion, df$demanda_MWh,
      main = "Demanda eléctrica vs Población",
@@ -57,9 +43,7 @@ ggplot(promedio_mes, aes(x = factor(mes), y = demanda_MWh)) +
        x = "Mes", y = "Demanda (MWh)") +
   coord_cartesian(ylim = c(600000, NA))
 
-# ---------------------------------------------------------------
-# 4. Preparación de datos: Entrenamiento y Validación
-# ---------------------------------------------------------------
+
 df <- df %>%
   mutate(fecha = anio * 100 + mes) %>%
   arrange(fecha)
@@ -70,9 +54,6 @@ entr <- df[!(df$fecha %in% tail(unique(df$fecha), 24)), ]
 entr <- subset(entr, select = -c(fecha))
 val  <- subset(val, select = -c(fecha))
 
-# ---------------------------------------------------------------
-# 5. Modelamiento predictivo
-# ---------------------------------------------------------------
 
 # Modelo inicial con todas las variables
 set.seed(42)
@@ -101,9 +82,6 @@ x.val  <- model.matrix(demanda_MWh ~ . , data = val)[, -1]
 
 rl <- cv.glmnet(x.entr, y.entr, alpha = 1, nlambda = 200)
 
-# ---------------------------------------------------------------
-# 6. Evaluación de modelos
-# ---------------------------------------------------------------
 
 # Función auxiliar para calcular R^2 ajustado
 calc_R2 <- function(model, data, val_y) {
